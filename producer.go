@@ -24,6 +24,7 @@ func (p *Producer) produce(file_path string) {
 
 	reader.Comma = '\t'
 	reader.LazyQuotes = true
+	reader.FieldsPerRecord = -1
 
 	csvLines, err := reader.ReadAll()
 
@@ -32,6 +33,9 @@ func (p *Producer) produce(file_path string) {
 	}
 
 	for _, line := range csvLines {
+		if len(line) != 6 {
+			continue
+		}
 		person := Person{line[0], line[1], line[2], line[3], line[4], line[5]}
 		*p.msgs <- person
 	}
