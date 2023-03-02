@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sort"
 	"sync"
 	"time"
 )
@@ -21,13 +22,20 @@ func (p *Printer) print(N int, wg *sync.WaitGroup) {
 		mutex.Unlock()
 		fmt.Println("End")
 
-		time.Sleep(1 * time.Second)
+		time.Sleep(2 * time.Second)
 	}
 	fmt.Println("Final: ")
 	wg.Wait()
+	keys := make([]int, 0, len(num_decade))
+	for k := range num_decade {
+		keys = append(keys, k)
+	}
+	sort.Slice(keys, func(p, q int) bool {
+		return keys[p] < keys[q]
+	})
 
-	for key, val := range num_decade {
-		fmt.Println(key, "-", key+9, "\t", val)
+	for _, k := range keys {
+		fmt.Println(k, "-", k+9, "\t", num_decade[k])
 	}
 
 	fmt.Println("Done forever")

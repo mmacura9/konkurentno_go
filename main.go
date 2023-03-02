@@ -12,7 +12,7 @@ var mutex1 sync.RWMutex
 var producer_done bool = false
 
 func main() {
-	file_path := "./test_fajlovi/data.tsv"
+	file_path := "./test_fajlovi/data_3000.tsv"
 	msgs := make(chan Person, 100)
 	done := make(chan int)
 	done_printer := make(chan int, 1)
