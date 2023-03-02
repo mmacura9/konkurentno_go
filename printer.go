@@ -24,7 +24,6 @@ func (p *Printer) print(N int, wg *sync.WaitGroup) {
 		time.Sleep(1 * time.Second)
 	}
 	fmt.Println("Final: ")
-	// wg.Done()
 	wg.Wait()
 
 	for key, val := range num_decade {

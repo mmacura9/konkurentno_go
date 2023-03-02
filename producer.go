@@ -44,7 +44,6 @@ func (p *Producer) produce(file_path string) {
 	if err != nil {
 		fmt.Println(err)
 	}
-
 	for _, line := range csvLines {
 		if len(line) != 6 {
 			continue
@@ -53,8 +52,4 @@ func (p *Producer) produce(file_path string) {
 		*p.msgs <- person
 	}
 	set_producer_done()
-	for i := 0; i < 6; i++ {
-		*p.done <- 1
-	}
-
 }

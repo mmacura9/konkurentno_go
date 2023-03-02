@@ -21,15 +21,14 @@ func main() {
 	N := 5
 	var consumers [5]*Consumer
 	var wg sync.WaitGroup
+
+	// combiner := &Combiner{decades, &done_combiner}
+	go p.produce(file_path)
 	for i := 0; i < N; i++ {
 		consumers[i] = &Consumer{&msgs, &done}
 		wg.Add(1)
 		go consumers[i].consume(100, &wg)
 	}
-
-	// combiner := &Combiner{decades, &done_combiner}
-
-	go p.produce(file_path)
 
 	go printer.print(5, &wg)
 	<-done_printer
