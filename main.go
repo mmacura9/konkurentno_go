@@ -8,18 +8,17 @@ func main() {
 	var num_decade map[int]int = make(map[int]int)
 	var mutex sync.Mutex
 	var mutex1 sync.RWMutex
-
 	var producer_done bool = false
+	var consumers [5]*Consumer
+	var wg sync.WaitGroup
 
 	file_path := "./test_fajlovi/data.tsv"
 	msgs := make(chan Person, 100)
-	done_printer := make(chan int, 1)
+	done_printer := make(chan int)
 
 	p := new_Producer(msgs, &producer_done)
 	printer := new_Printer(done_printer, msgs)
 	N := 5
-	var consumers [5]*Consumer
-	var wg sync.WaitGroup
 
 	go p.produce(file_path, &mutex1)
 
