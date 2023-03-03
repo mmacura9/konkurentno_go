@@ -27,6 +27,7 @@ func main() {
 		wg.Add(1)
 		go consumers[i].consume(100, &producer_done, num_decade, &wg, &mutex, &mutex1)
 	}
+
 	go printer.print(5, &producer_done, num_decade, &wg, &mutex, &mutex1)
 	<-done_printer
 }

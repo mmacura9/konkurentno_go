@@ -66,7 +66,5 @@ func (c *Consumer) consume(N int, producer_done *bool, num_decade map[int]int, w
 				break_for = true
 			}
 		}
-
 	}
-	// fmt.Println("Consumer done")
 }

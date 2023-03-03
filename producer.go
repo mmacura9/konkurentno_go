@@ -16,13 +16,6 @@ func new_Producer(msgs chan Person, done *bool) *Producer {
 	return &Producer{msgs, done}
 }
 
-// func get_producer_done() bool {
-// 	mutex1.RLock()
-// 	x := producer_done
-// 	mutex1.RUnlock()
-// 	return x
-// }
-
 func (p *Producer) produce(file_path string, mutex *sync.RWMutex) {
 	csvFile, err := os.Open(file_path)
 
