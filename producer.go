@@ -4,27 +4,26 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
+	"sync"
 )
 
 type Producer struct {
-	msgs *chan Person
-	done *chan int
+	msgs chan Person
+	done *bool
 }
 
-func set_producer_done() {
-	mutex1.Lock()
-	producer_done = true
-	mutex1.Unlock()
+func new_Producer(msgs chan Person, done *bool) *Producer {
+	return &Producer{msgs, done}
 }
 
-func get_producer_done() bool {
-	mutex1.RLock()
-	x := producer_done
-	mutex1.RUnlock()
-	return x
-}
+// func get_producer_done() bool {
+// 	mutex1.RLock()
+// 	x := producer_done
+// 	mutex1.RUnlock()
+// 	return x
+// }
 
-func (p *Producer) produce(file_path string) {
+func (p *Producer) produce(file_path string, mutex *sync.RWMutex) {
 	csvFile, err := os.Open(file_path)
 
 	if err != nil {
@@ -48,8 +47,10 @@ func (p *Producer) produce(file_path string) {
 		if len(line) != 6 {
 			continue
 		}
-		person := Person{line[0], line[1], line[2], line[3], line[4], line[5]}
-		*p.msgs <- person
+		person := new_Person(line[0], line[1], line[2], line[3], line[4], line[5])
+		p.msgs <- person
 	}
-	set_producer_done()
+	mutex.Lock()
+	*p.done = true
+	mutex.Unlock()
 }

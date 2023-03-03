@@ -8,12 +8,22 @@ import (
 )
 
 type Printer struct {
-	done *chan int
-	msgs *chan Person
+	done chan int
+	msgs chan Person
 }
 
-func (p *Printer) print(N int, wg *sync.WaitGroup) {
-	for !get_producer_done() || len(*p.msgs) > 0 {
+func new_Printer(done chan int, msgs chan Person) *Printer {
+	return &Printer{done: done, msgs: msgs}
+}
+
+func (p *Printer) print(N int, producer_done *bool, num_decade map[int]int, wg *sync.WaitGroup, mutex *sync.Mutex, mutex1 *sync.RWMutex) {
+	mutex1.RLock()
+	x := *producer_done
+	mutex1.RUnlock()
+	for !x {
+		mutex1.RLock()
+		x = *producer_done
+		mutex1.RUnlock()
 		fmt.Println("Start")
 		mutex.Lock()
 		for key, val := range num_decade {
@@ -39,5 +49,5 @@ func (p *Printer) print(N int, wg *sync.WaitGroup) {
 	}
 
 	fmt.Println("Done forever")
-	*p.done <- 1
+	p.done <- 1
 }

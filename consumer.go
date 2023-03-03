@@ -7,15 +7,14 @@ import (
 )
 
 type Consumer struct {
-	msgs   *chan Person
-	p_done *chan int
+	msgs chan Person
 }
 
-func newConsumer(msgs *chan Person) *Consumer {
+func new_Consumer(msgs chan Person) *Consumer {
 	return &Consumer{msgs: msgs}
 }
 
-func do(num *int, N int, decade_map map[int]int, person *Person) {
+func do(num *int, N int, decade_map map[int]int, person *Person, num_decade map[int]int, mutex *sync.Mutex) {
 	*num = *num + 1
 	if *num == N {
 		*num = 0
@@ -45,17 +44,20 @@ func do(num *int, N int, decade_map map[int]int, person *Person) {
 	}
 }
 
-func (c *Consumer) consume(N int, wg *sync.WaitGroup) {
+func (c *Consumer) consume(N int, producer_done *bool, num_decade map[int]int, wg *sync.WaitGroup, mutex *sync.Mutex, mutex1 *sync.RWMutex) {
 	num := 0
 	decade_map := make(map[int]int)
 	defer wg.Done()
 	break_for := false
 	for !break_for {
 		select {
-		case person := <-*c.msgs:
-			do(&num, N, decade_map, &person)
+		case person := <-c.msgs:
+			do(&num, N, decade_map, &person, num_decade, mutex)
 		default:
-			if get_producer_done() {
+			mutex1.RLock()
+			p_done := *producer_done
+			mutex1.RUnlock()
+			if p_done {
 				mutex.Lock()
 				for key, val := range decade_map {
 					num_decade[key] += val
