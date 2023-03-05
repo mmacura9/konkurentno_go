@@ -16,14 +16,14 @@ func new_Printer(done chan int, msgs chan Person) *Printer {
 	return &Printer{done: done, msgs: msgs}
 }
 
-func (p *Printer) print(N int, producer_done *bool, num_decade map[int]int, wg *sync.WaitGroup, mutex *sync.Mutex, mutex1 *sync.RWMutex) {
-	mutex1.RLock()
+func (p *Printer) print(N int, producer_done *bool, num_decade map[int]int, wg *sync.WaitGroup, mutex *sync.Mutex, mutex1 *sync.Mutex) {
+	mutex1.Lock()
 	x := *producer_done
-	mutex1.RUnlock()
+	mutex1.Unlock()
 	for !x {
-		mutex1.RLock()
+		mutex1.Lock()
 		x = *producer_done
-		mutex1.RUnlock()
+		mutex1.Unlock()
 		fmt.Println("Start")
 		mutex.Lock()
 		for key, val := range num_decade {

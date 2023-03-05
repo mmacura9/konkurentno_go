@@ -8,15 +8,16 @@ import (
 )
 
 type Producer struct {
-	msgs chan Person
-	done *bool
+	msgs          chan Person
+	done          chan int
+	producer_done *bool
 }
 
-func new_Producer(msgs chan Person, done *bool) *Producer {
-	return &Producer{msgs, done}
+func new_Producer(msgs chan Person, done chan int, producer_done *bool) *Producer {
+	return &Producer{msgs, done, producer_done}
 }
 
-func (p *Producer) produce(file_path string, mutex *sync.RWMutex) {
+func (p *Producer) produce(file_path string, mutex *sync.Mutex) {
 	csvFile, err := os.Open(file_path)
 
 	if err != nil {
@@ -44,6 +45,7 @@ func (p *Producer) produce(file_path string, mutex *sync.RWMutex) {
 		p.msgs <- person
 	}
 	mutex.Lock()
-	*p.done = true
+	*p.producer_done = true
 	mutex.Unlock()
+	p.done <- 1
 }
